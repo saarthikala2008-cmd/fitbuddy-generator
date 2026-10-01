@@ -1,0 +1,7 @@
+[
+  "tests/test_app.py::test_feedback_unknown_user",
+  "tests/test_app.py::test_gemini_failure_is_shown_not_stored",
+  "tests/test_app.py::test_generate_feedback_and_admin_flow",
+  "tests/test_app.py::test_home_page",
+  "tests/test_app.py::test_validation_error"
+]

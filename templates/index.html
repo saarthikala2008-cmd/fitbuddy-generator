@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBuddy - AI Workout Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: 'Roboto', Arial, sans-serif;
+      background: linear-gradient(135deg, #1e293b, #0f172a) fixed;
+      background-image: url('/static/images/gym-bg.jpg'), linear-gradient(135deg, #1e293b, #0f172a);
+      background-size: cover; background-position: center; background-attachment: fixed;
+      display: flex; justify-content: center; align-items: center; padding: 20px;
+    }
+    .container {
+      background: rgba(255,255,255,0.93); width: 100%; max-width: 640px;
+      padding: 30px 32px; border-radius: 18px; box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+    }
+    h1 { text-align: center; color: #1e293b; margin-top: 0; }
+    label { display: block; font-weight: 700; margin: 14px 0 6px; color: #111827; }
+    input, select {
+      width: 100%; padding: 12px; font-size: 15px; border: 1px solid #cbd5e1;
+      border-radius: 10px; background: #fff;
+    }
+    input:focus, select:focus { outline: 2px solid #3b82f6; border-color: #3b82f6; }
+    button {
+      width: 100%; margin-top: 22px; padding: 14px; font-size: 17px; color: #fff;
+      background: #3b82f6; border: none; border-radius: 10px; cursor: pointer; transition: background .2s, transform .1s;
+    }
+    button:hover { background: #2563eb; }
+    button:active { transform: scale(0.99); }
+    button:disabled { background: #93c5fd; cursor: wait; }
+    .error { background: #fee2e2; color: #991b1b; padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #fecaca; }
+    .links { text-align: center; margin-top: 16px; }
+    .links a { color: #2563eb; text-decoration: none; font-weight: 500; }
+    .links a:hover { text-decoration: underline; }
+    @media (max-width: 600px) { .container { padding: 22px 18px; } h1 { font-size: 1.5rem; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💪 FitBuddy - AI Workout Generator</h1>
+
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+
+    <form action="/generate-workout" method="post" id="plan-form">
+      <label for="username">Name:</label>
+      <input type="text" id="username" name="username" value="{{ form.get('username', '') }}" required maxlength="100">
+
+      <label for="user_id">User ID:</label>
+      <input type="number" id="user_id" name="user_id" value="{{ form.get('user_id', '') }}" required min="1" step="1">
+
+      <label for="age">Age:</label>
+      <input type="number" id="age" name="age" value="{{ form.get('age', '') }}" required min="5" max="120" step="1">
+
+      <label for="weight">Weight (kg):</label>
+      <input type="number" id="weight" name="weight" value="{{ form.get('weight', '') }}" required min="20" max="400" step="0.1">
+
+      <label for="goal">Fitness Goal:</label>
+      <input type="text" id="goal" name="goal" value="{{ form.get('goal', '') }}" placeholder="e.g., weight loss, flexibility" required minlength="2" maxlength="200">
+
+      <label for="intensity">Workout Intensity:</label>
+      <select id="intensity" name="intensity" required>
+        {% for level in ['low', 'medium', 'high'] %}
+        <option value="{{ level }}" {% if form.get('intensity') == level %}selected{% endif %}>{{ level | capitalize }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" id="submit-btn">Generate Plan</button>
+    </form>
+
+    <div class="links"><a href="/view-all-users">📋 View all users (admin)</a></div>
+  </div>
+
+  <script>
+    // Gemini Pro can take 10-30s; give the user feedback and prevent double-submits.
+    document.getElementById('plan-form').addEventListener('submit', function () {
+      var b = document.getElementById('submit-btn');
+      b.disabled = true; b.textContent = 'Generating your plan... please wait';
+    });
+  </script>
+</body>
+</html>
